@@ -1,0 +1,124 @@
+@mixin key() {
+  user-select: none;
+}
+
+@mixin whiteKeyContainer() {
+  @apply relative w-[2em] h-[11em] mr-[0em];
+}
+
+.whiteKeyContainer {
+  @include whiteKeyContainer();
+}
+
+@mixin whiteKey() {
+  @include key();
+  @include whiteKeyContainer();
+
+  border-left: 0.0625em solid #bbb;
+  border-bottom: 0.0625em solid #bbb;
+  border-radius: 0 0 0.1875em 0.1875em;
+  box-shadow: -0.0625em 0 0 rgba(255, 255, 255, 0.8) inset,
+    0 0 0.25em #ccc inset, 0 0 0.15em rgba(0, 0, 0, 0.2);
+  background: linear-gradient(to bottom, #eee 0%, #eeebe5 100%);
+
+  &::before {
+    content: '.';
+    color: transparent;
+    background-image: url('/woods/velvet1.png');
+    background-size: cover;
+    background-repeat: repeat;
+
+    @apply absolute left-0 top-0 w-full h-[0.1875em] z-10;
+  }
+
+  &::after {
+    content: '.';
+    color: transparent;
+    // background-image: url('/woods/key.png');
+    background-size: cover;
+    background-repeat: repeat;
+
+    @apply absolute left-0 top-0 w-full h-full;
+  }
+}
+
+.white {
+  @include whiteKey();
+}
+
+@mixin whiteKeyPressed() {
+  border-top: 0.0625em solid #777;
+  border-left: 0.0625em solid #999;
+  border-bottom: 0.0625em solid #999;
+  box-shadow: 0.125em 0 0.15em rgba(0, 0, 0, 0.1) inset,
+    -0.25em 0.25em 1.25em rgba(0, 0, 0, 0.2) inset,
+    0 0 0.15em rgba(0, 0, 0, 0.2);
+  // background: linear-gradient(to bottom, #fff 0%, #e9e9e9 100%);
+  background: linear-gradient(to bottom, #ff0 0%, #00e900 100%);
+}
+
+.whiteKeyPressed {
+  @include whiteKeyPressed();
+}
+
+@mixin blackKey() {
+  @include key();
+  @apply absolute w-[1em] h-[7em] z-[11] top-0;
+
+  border: 0.0625em solid #000;
+  border-radius: 0 0 0.15em 0.15em;
+  box-shadow: -0.0625em -0.0625em 0.125em rgba(255, 255, 255, 0.2) inset,
+    0 -0.3125em 0.125em 0.1875em rgba(0, 0, 0, 0.6) inset,
+    0 0.125em 4px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(45deg, #222 0%, #555 100%);
+
+  &::after {
+    content: '.';
+    color: transparent;
+    // background-image: url('/woods/black-key.png');
+    background-size: cover;
+    background-repeat: repeat;
+
+    @apply absolute left-0 top-0 w-full h-full;
+  }
+}
+
+@mixin blackKeyPressed() {
+  box-shadow: -0.0625em -0.0625em 0.125em rgba(255, 255, 255, 0.2) inset,
+    0 -0.125em 0.125em 0.1875em rgba(0, 0, 0, 0.6) inset,
+    0 0.0625em 0.125em rgba(0, 0, 0, 0.5);
+  // background: linear-gradient(to right, #444 0%, #222 100%);
+  background: linear-gradient(to right, #ff9 0%, #11e900 100%);
+}
+
+.black {
+  @include blackKey();
+}
+
+.blackKeyPressed {
+  @include blackKeyPressed();
+}
+
+.CsharpDb {
+  @apply left-[-0.6em];
+}
+
+.DsharpEb {
+  @apply left-[-0.25em];
+}
+
+.FsharpGb {
+  @apply right-[-0.375em];
+}
+
+.GsharpAb {
+  @apply left-[1.5em];
+}
+
+.AsharpBb {
+  @apply left-[-0.375em];
+}
+
+.white.pressed {
+  @include whiteKeyPressed();
+}
