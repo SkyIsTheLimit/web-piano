@@ -66,7 +66,6 @@ export class Piano extends Component<PianoProps> {
   }
 
   render() {
-    console.log('Pressed Notes Received by Piano', this.props.pressedNotes);
     return (
       <div
         className='flex relative w-fit px-4 pt-16 pb-4 mt-72 justify-center text-inherit mx-auto shadow-md'

@@ -36,7 +36,6 @@ export default class Home extends Component<{}, { pressedNotes: string[] }> {
     this.initSampler();
 
     const newPressedNotes = [...this.state.pressedNotes, e.detail.note];
-    console.log('Setting Pressed Notes', newPressedNotes);
 
     this.setState({
       pressedNotes: newPressedNotes,
@@ -52,7 +51,6 @@ export default class Home extends Component<{}, { pressedNotes: string[] }> {
 
     const newPressedNotes = [...this.state.pressedNotes];
     newPressedNotes.splice(this.state.pressedNotes.indexOf(e.detail.note), 1);
-    console.log('Setting Released Notes', newPressedNotes);
     this.setState({
       pressedNotes: newPressedNotes,
     });
