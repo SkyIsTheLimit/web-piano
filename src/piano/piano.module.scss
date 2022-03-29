@@ -1,0 +1,46 @@
+.powerButton {
+  @apply rounded-full p-2;
+  @apply bg-slate-700;
+
+  color: white;
+  box-shadow: -2px -2px 2px rgb(77, 98, 120), 4px 4px 4px rgb(26, 32, 40);
+
+  &.pressed {
+    box-shadow: -2px -2px 2px rgb(26, 32, 40), 2px 2px 2px rgb(77, 98, 120),
+      inset -2px -2px 2px rgb(64, 82, 100), inset 2px 2px 2px rgb(51, 65, 81);
+
+    path {
+      @apply fill-slate-300;
+    }
+  }
+
+  path {
+    @apply fill-slate-500;
+  }
+}
+
+.screen {
+  @apply absolute left-1/2 bg-slate-700 w-96 h-fit translate-x-[-50%] rounded-md;
+
+  bottom: calc(100% - 3em);
+
+  box-shadow: inset -2px -2px 4px rgb(77, 98, 120),
+    inset 2px 2px 4px rgb(26, 32, 40);
+
+  p {
+    @apply text-slate-500 text-center mt-2;
+  }
+
+  .controllers {
+    @apply overflow-scroll h-20;
+  }
+}
+
+.screenItem {
+  @apply bg-transparent text-slate-400 p-0 m-0 cursor-pointer;
+  @apply text-[0.1em] mt-2 mb-1 mx-2 border-2 border-transparent px-2;
+
+  &.selected {
+    @apply text-slate-300 bg-slate-500 font-bold;
+  }
+}

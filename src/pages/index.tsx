@@ -1,20 +1,144 @@
 import Head from 'next/head';
 import { Component } from 'react';
 import * as Tone from 'tone';
+import { getMIDIDevices } from '../midi';
 import { Piano } from '../piano/piano';
 
-export default class Home extends Component<{}, { pressedNotes: string[] }> {
+export const accidentals = [
+  '',
+  '#',
+  '',
+  '#',
+  '',
+  '',
+  '#',
+  '',
+  '#',
+  '',
+  '#',
+  '',
+];
+
+export const notes = [
+  'C',
+  'C',
+  'D',
+  'D',
+  'E',
+  'F',
+  'F',
+  'G',
+  'G',
+  'A',
+  'A',
+  'B',
+];
+
+const MIDI_ON_CC = 144;
+const MIDI_OFF_CC = 128;
+
+export type ProcessedMIDIMessage = {
+  cc: number;
+  value: number;
+  velocity: number;
+  noteName: string;
+  accidental: boolean;
+  octave: number;
+};
+
+interface HomePageState {
+  pressedNotes: {
+    [octave: number]: string[];
+  };
+  allPressedNotes: string[];
+  midiDevices: WebMidi.MIDIInput[];
+  selectedMidiDevice?: WebMidi.MIDIInput;
+  messages: ProcessedMIDIMessage[];
+  power: boolean;
+}
+
+export default class Home extends Component<{}, HomePageState> {
   sampler: Tone.Sampler;
 
   constructor(props) {
     super(props);
 
     this.state = {
-      pressedNotes: [],
+      pressedNotes: {},
+      allPressedNotes: [],
+      midiDevices: [],
+      messages: [],
+      power: false,
     };
 
     this.onNotePress = this.onNotePress.bind(this);
     this.onNoteRelease = this.onNoteRelease.bind(this);
+    this.onPowerChanged = this.onPowerChanged.bind(this);
+  }
+
+  setSelectMidiDevice(device: WebMidi.MIDIInput) {
+    if (!device) return;
+
+    device.onmidimessage = (msg: any) => {
+      const [cc, value, velocity] = msg.data;
+
+      const octave = Math.floor(value / 12);
+      const noteName = `${notes[value % 12]}`;
+      const accidental = !!accidentals[value % 12].length;
+
+      const fullNote = `${noteName}${accidental ? '#' : ''}`;
+
+      if (cc == MIDI_ON_CC) {
+        this.onNotePress({
+          detail: {
+            note: `${fullNote}${octave}`,
+          },
+        });
+      } else if (cc == MIDI_OFF_CC) {
+        this.onNoteRelease({
+          detail: {
+            note: `${fullNote}${octave}`,
+          },
+        });
+      }
+
+      const newMsg: ProcessedMIDIMessage = {
+        cc,
+        value,
+        velocity,
+        noteName,
+        octave,
+        accidental,
+      };
+
+      const existingMessage = this.state.messages.filter(
+        (msg) => msg.value === newMsg.value && msg.cc === MIDI_ON_CC
+      );
+
+      if (existingMessage.length) {
+        existingMessage[0].cc = MIDI_OFF_CC;
+
+        this.setState({
+          ...this.state,
+        });
+      } else {
+        this.setState({
+          messages: [newMsg, ...this.state.messages],
+        });
+      }
+    };
+
+    this.setState({
+      selectedMidiDevice: device,
+    });
+  }
+
+  async componentDidMount() {
+    const midiDevices = await getMIDIDevices();
+    this.setState({
+      midiDevices,
+    });
+    this.setSelectMidiDevice(midiDevices[0]);
   }
 
   initSampler() {
@@ -30,33 +154,54 @@ export default class Home extends Component<{}, { pressedNotes: string[] }> {
         baseUrl: 'https://tonejs.github.io/audio/salamander/',
       }).toDestination();
     }
+
+    if (Tone.context.state !== 'running') {
+      Tone.context.resume();
+    }
   }
 
-  onNotePress(e) {
-    this.initSampler();
+  async onNotePress(
+    e: CustomEvent<{ note: string }> | { detail: { note: string } }
+  ) {
+    if (this.state.power) {
+      this.initSampler();
 
-    const newPressedNotes = [...this.state.pressedNotes, e.detail.note];
+      const newPressedNotes = [...this.state.allPressedNotes, e.detail.note];
 
-    this.setState({
-      pressedNotes: newPressedNotes,
-    });
+      this.setState({
+        allPressedNotes: newPressedNotes,
+      });
 
-    Tone.loaded().then(() => {
-      this.sampler.triggerAttackRelease(newPressedNotes, 4);
-    });
+      await Tone.loaded();
+
+      this.sampler.triggerAttackRelease(e.detail.note, 4);
+    }
   }
 
-  onNoteRelease(e) {
-    this.initSampler();
+  async onNoteRelease(
+    e: CustomEvent<{ note: string }> | { detail: { note: string } }
+  ) {
+    if (this.state.power) {
+      this.initSampler();
 
-    const newPressedNotes = [...this.state.pressedNotes];
-    newPressedNotes.splice(this.state.pressedNotes.indexOf(e.detail.note), 1);
+      const newPressedNotes = [...this.state.allPressedNotes];
+      newPressedNotes.splice(
+        this.state.allPressedNotes.indexOf(e.detail.note),
+        1
+      );
+      this.setState({
+        allPressedNotes: newPressedNotes,
+      });
+
+      await Tone.loaded();
+
+      this.sampler.triggerRelease(e.detail.note, 4);
+    }
+  }
+
+  onPowerChanged(e: CustomEvent<{ power: boolean }>) {
     this.setState({
-      pressedNotes: newPressedNotes,
-    });
-
-    Tone.loaded().then(() => {
-      this.sampler.triggerRelease(newPressedNotes, 4);
+      power: e.detail.power,
     });
   }
 
@@ -73,7 +218,10 @@ export default class Home extends Component<{}, { pressedNotes: string[] }> {
           <Piano
             onNotePress={this.onNotePress}
             onNoteRelease={this.onNoteRelease}
-            pressedNotes={this.state.pressedNotes}
+            onPowerChanged={this.onPowerChanged}
+            controllers={this.state.midiDevices}
+            selectedController={this.state.selectedMidiDevice}
+            pressedNotes={this.state.allPressedNotes}
           ></Piano>
         </div>
       </div>
