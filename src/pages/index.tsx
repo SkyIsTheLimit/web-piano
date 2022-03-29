@@ -163,36 +163,46 @@ export default class Home extends Component<{}, HomePageState> {
   async onNotePress(
     e: CustomEvent<{ note: string }> | { detail: { note: string } }
   ) {
-    if (this.state.power) {
-      this.initSampler();
-
-      const newPressedNotes = [...this.state.allPressedNotes, e.detail.note];
-
-      this.setState({
-        allPressedNotes: newPressedNotes,
-      });
-
-      await Tone.loaded();
-
-      this.sampler.triggerAttackRelease(e.detail.note, 4);
+    if (!this.state.power) {
+      return alert(
+        'The piano is turned off, please turn it on with the power button first.'
+      );
     }
+
+    this.initSampler();
+
+    const newPressedNotes = [...this.state.allPressedNotes, e.detail.note];
+
+    this.setState({
+      allPressedNotes: newPressedNotes,
+    });
+
+    await Tone.loaded();
+
+    this.sampler.triggerAttackRelease(e.detail.note, 4);
   }
 
   async onNoteRelease(
     e: CustomEvent<{ note: string }> | { detail: { note: string } }
   ) {
-    if (this.state.power) {
-      this.initSampler();
-
-      const newPressedNotes = [...this.state.allPressedNotes];
-      newPressedNotes.splice(
-        this.state.allPressedNotes.indexOf(e.detail.note),
-        1
+    if (!this.state.power) {
+      return alert(
+        'The piano is turned off, please turn it on with the power button first.'
       );
-      this.setState({
-        allPressedNotes: newPressedNotes,
-      });
+    }
 
+    this.initSampler();
+
+    const newPressedNotes = [...this.state.allPressedNotes];
+    newPressedNotes.splice(
+      this.state.allPressedNotes.indexOf(e.detail.note),
+      1
+    );
+    this.setState({
+      allPressedNotes: newPressedNotes,
+    });
+
+    if (this.state.power) {
       await Tone.loaded();
 
       this.sampler.triggerRelease(e.detail.note, 4);
