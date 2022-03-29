@@ -3,11 +3,11 @@
   @apply bg-slate-700;
 
   color: white;
-  box-shadow: -2px -2px 2px rgb(77, 98, 120), 4px 4px 4px rgb(26, 32, 40);
+  box-shadow: -2px -2px 4px rgb(77, 98, 120), 4px 4px 8px rgb(26, 32, 40);
 
   &.pressed {
-    box-shadow: -2px -2px 2px rgb(26, 32, 40), 2px 2px 2px rgb(77, 98, 120),
-      inset -2px -2px 2px rgb(64, 82, 100), inset 2px 2px 2px rgb(51, 65, 81);
+    box-shadow: -2px -2px 8px rgb(26, 32, 40), 2px 2px 8px rgb(77, 98, 120),
+      inset -2px -2px 4px rgb(64, 82, 100), inset 2px 2px 4px rgb(51, 65, 81);
 
     path {
       @apply fill-slate-300;
