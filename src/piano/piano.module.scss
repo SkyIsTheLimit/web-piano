@@ -19,26 +19,33 @@
   }
 }
 
+.screenContainer {
+  @apply absolute left-1/2 z-50 translate-x-[-50%] rounded-lg;
+  @apply w-[30rem] h-max;
+  @apply p-1 bg-slate-700;
+
+  bottom: calc(100% - 3.5em);
+}
+
 .screen {
-  @apply absolute left-1/2 bg-slate-700 w-96 h-fit translate-x-[-50%] rounded-md;
+  @apply bg-slate-700 rounded-md py-4;
 
-  bottom: calc(100% - 3em);
-
-  box-shadow: inset -2px -2px 4px rgb(77, 98, 120),
-    inset 2px 2px 4px rgb(26, 32, 40);
-
+  box-shadow: inset -2px -2px 2px rgba(255, 255, 255, 0.1),
+    inset 4px 4px 2px rgba(0, 0, 0, 0.2);
   p {
-    @apply text-slate-500 text-center mt-2;
+    @apply text-slate-400 text-center py-2;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .controllers {
-    @apply overflow-scroll h-20;
+    @apply overflow-scroll h-fit;
   }
 }
 
 .screenItem {
   @apply bg-transparent text-slate-400 p-0 m-0 cursor-pointer;
-  @apply text-[0.1em] mt-2 mb-1 mx-2 border-2 border-transparent px-2;
+  @apply text-[0.1em] mx-2 border-2 border-transparent p-2;
+  @apply border-b-slate-600 border;
 
   &.selected {
     @apply text-slate-300 bg-slate-500 font-bold;

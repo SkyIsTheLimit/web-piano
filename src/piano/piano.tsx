@@ -118,32 +118,34 @@ export class Piano extends Component<
           backgroundSize: 'cover',
         }}
       >
-        <div className={`${styles.screen}`}>
-          <p>Select Your MIDI Controller</p>
-          <div className={`${styles.controllers}`}>
-            {this.state.controllers.length === 0 ? (
-              <p className='border border-slate-500 m-4 p-1 rounded-md'>
-                No controllers detected. If you just connected a controller,
-                refresh the page to see it here.
-              </p>
-            ) : (
-              <></>
-            )}
-            {this.state.controllers.map((controller, index) => (
-              <div
-                key={index}
-                className={`${styles.screenItem} ${
-                  this.state.selectedController === controller
-                    ? styles.selected
-                    : ''
-                }`}
-                onClick={() =>
-                  this.setState({ selectedController: controller })
-                }
-              >
-                {controller.manufacturer} {controller.name}
-              </div>
-            ))}
+        <div className={`${styles.screenContainer}`}>
+          <div className={`${styles.screen}`}>
+            <p>Select Your MIDI Controller</p>
+            <div className={`${styles.controllers}`}>
+              {this.state.controllers.length === 0 ? (
+                <p className='border border-slate-500 m-4 p-1 rounded-md'>
+                  No controllers detected. If you just connected a controller,
+                  refresh the page to see it here.
+                </p>
+              ) : (
+                <></>
+              )}
+              {this.state.controllers.map((controller, index) => (
+                <div
+                  key={index}
+                  className={`${styles.screenItem} ${
+                    this.state.selectedController === controller
+                      ? styles.selected
+                      : ''
+                  }`}
+                  onClick={() =>
+                    this.setState({ selectedController: controller })
+                  }
+                >
+                  {controller.manufacturer} {controller.name}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
